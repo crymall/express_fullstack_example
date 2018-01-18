@@ -34,13 +34,12 @@ function getSingleUser(req, res, next) {
 }
 
 function updateSingleUser(req, res, next) {
-  db.one('update users set username = ${newName} where username = ${username}',
+  db.none('update users set username = ${newName} where username = ${username}',
     req.body)
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
-          data: data,
           message: 'Changed one user'
         });
     })
