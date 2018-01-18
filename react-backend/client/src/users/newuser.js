@@ -1,39 +1,60 @@
-import React from 'react';
+import React from "react";
+import axios from "axios";
 
 class NewUser extends React.Component {
-  state = { username: "" };
+  state = { usernameInput: "", message: "" };
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState({
-      username: e.target.value
+      usernameInput: e.target.value,
+      message: ""
     });
-  }
+  };
 
-  submitForm = (e) => {
+  submitForm = e => {
     e.preventDefault();
-    fetch('/users/new', {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username: this.state.username })
-    })
-  }
+    const { usernameInput } = this.state;
+
+    if (usernameInput.length < 3) {
+      this.setState({
+        message: "Username length must be at least 3"
+      });
+      return;
+    }
+    axios
+      .post("/users/new", {
+        username: this.state.usernameInput
+      })
+      .then(res => {
+        console.log(res.data);
+        this.setState({ usernameInput: "", message: "Inserted User" });
+      })
+      .catch(err => {
+        console.log("error: ", err);
+        this.setState({ usernameInput: "", message: "Error inserting user" });
+      });
+  };
 
   render() {
-    return(
+    const { usernameInput, message } = this.state;
+    return (
       <div>
         <form onSubmit={this.submitForm}>
           <label>
             Username:
-            <input type="text" name="username" onChange={this.handleChange} />
+            <input
+              type="text"
+              name="username"
+              value={usernameInput}
+              onChange={this.handleChange}
+            />
           </label>
 
           <input type="submit" value="Submit" />
         </form>
+        <p>{message}</p>
       </div>
-    )
+    );
   }
 }
 
