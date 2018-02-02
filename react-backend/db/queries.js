@@ -68,7 +68,7 @@ function createUser(req, res, next) {
 }
 
 function login(req, res, next) {
-  authenticate(req.body.username, req.body.password)
+  pass.authenticate(req.body.username, req.body.password)
     .then(function(data) {
       res.status(200)
         .json({
@@ -83,5 +83,6 @@ module.exports = {
   getAllUsers: getAllUsers,
   getSingleUser: getSingleUser,
   createUser: createUser,
-  updateSingleUser: updateSingleUser
+  updateSingleUser: updateSingleUser,
+  login: login
 };

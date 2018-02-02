@@ -3,6 +3,7 @@ import { Route, Link, Switch } from 'react-router-dom';
 import UserList from './userlist';
 import NewUser from './newuser';
 import SingleUser from './singleuser';
+import LoginUser from './loginuser';
 
 class Users extends React.Component {
   state = { users: [] }
@@ -49,6 +50,7 @@ class Users extends React.Component {
 
         <Route exact path='/users' render={ this.renderUserList } />
         <Route path='/users/new' component={ NewUser } />
+        <Route path='/users/login' component={ LoginUser } />
         <Route path='/users/:name/edit' render={ this.renderUser } />
       </div>
     );

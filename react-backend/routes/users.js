@@ -7,5 +7,6 @@ router.get('/', db.getAllUsers);
 router.post('/new', db.createUser);
 router.patch('/:username/edit', db.updateSingleUser);
 router.get('/:username/edit', db.getSingleUser);
+router.post('/login', db.login);
 
 module.exports = router;
