@@ -1,7 +1,8 @@
 var pgp = require('pg-promise')({});
 var connectionString = 'postgres://localhost/userlist';
 var db = pgp(connectionString);
-var pass = require('./validation');
+const authHelpers = require('../auth/helpers');
+const passport = require('../auth/local');
 
 function getAllUsers(req, res, next) {
   db.any('select * from users')
@@ -49,44 +50,32 @@ function updateSingleUser(req, res, next) {
     });
 }
 
-function createUser(req, res, next) {
-  pass.createPassword(req.body.password)
-    .then((hashed) => {
-      let user = {
-                   username: req.body.username,
-                   password_digest: hashed
-                 }
-
-      db.none('insert into users(username, password_digest) values(${username}, ${password_digest})', user)
-        .then(function () {
+function registerUser(req, res, next) {
+  return authHelpers.createUser(req)
+    .then((response) => {
+      passport.authenticate('local', (err, user, info) => {
+        if (user) {
           res.status(200)
-            .json({
-              status: 'success',
-              message: 'Inserted one user'
-            });
-        })
-        .catch(function (err) {
-          return next(err);
-        });
+             .json({
+               status: 'success',
+               data: user,
+               message: 'Registered one user'
+             });
+        }
+      })(req, res, next);
     })
-}
-
-function login(req, res, next) {
-  pass.authenticate(req.body.username, req.body.password)
-    .then(function(data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'logged in user'
-        })
-    })
+    .catch((err) => {
+      res.status(500)
+         .json({
+           status: 'error',
+           error: err
+         })
+    });
 }
 
 module.exports = {
   getAllUsers: getAllUsers,
   getSingleUser: getSingleUser,
-  createUser: createUser,
-  updateSingleUser: updateSingleUser,
-  login: login
+  registerUser: registerUser,
+  updateSingleUser: updateSingleUser
 };
