@@ -1,6 +1,7 @@
 var pgp = require('pg-promise')({});
 var connectionString = 'postgres://localhost/userlist';
 var db = pgp(connectionString);
+var pass = require('./validation');
 
 function getAllUsers(req, res, next) {
   db.any('select * from users')
@@ -49,8 +50,11 @@ function updateSingleUser(req, res, next) {
 }
 
 function createUser(req, res, next) {
-  db.none('insert into users(username) values(${username})',
-    req.body)
+  let user = {
+               username: req.body.username,
+               password_digest: pass.createPassword(req.body.password)
+             }
+  db.none('insert into users(username, password_digest) values(${username}, ${password_digest})', user)
     .then(function () {
       res.status(200)
         .json({
@@ -61,6 +65,18 @@ function createUser(req, res, next) {
     .catch(function (err) {
       return next(err);
     });
+}
+
+function login(req, res, next) {
+  authenticate(req.body.username, req.body.password)
+    .then(function(data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'logged in user'
+        })
+    })
 }
 
 module.exports = {

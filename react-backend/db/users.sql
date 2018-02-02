@@ -5,8 +5,9 @@ CREATE DATABASE userlist;
 
 CREATE TABLE users (
   ID SERIAL PRIMARY KEY,
-  username VARCHAR
+  username VARCHAR,
+  password_digest VARCHAR
 );
 
-INSERT INTO users (username)
-  VALUES ('Tyler'), ('Shannon'), ('Richard');
+INSERT INTO users (username, password_digest)
+  VALUES ('Tyler', 'password'), ('Shannon', 'password1'), ('Richard', 'password2');
