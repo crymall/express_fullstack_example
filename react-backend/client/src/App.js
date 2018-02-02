@@ -14,6 +14,12 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <nav>
+          <Link to='/users'> User List </Link> {"  "}
+          <Link to='/users/new'> Add New User </Link> {"  "}
+          <Link to='/users/login'> Log In User </Link>
+        </nav>
+
         <Route path='/' render={this.homepage} />
         <Route path='/users' component={Users} />
       </div>
