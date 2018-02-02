@@ -50,21 +50,25 @@ function updateSingleUser(req, res, next) {
 }
 
 function createUser(req, res, next) {
-  let user = {
-               username: req.body.username,
-               password_digest: pass.createPassword(req.body.password)
-             }
-  db.none('insert into users(username, password_digest) values(${username}, ${password_digest})', user)
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Inserted one user'
+  pass.createPassword(req.body.password)
+    .then((hashed) => {
+      let user = {
+                   username: req.body.username,
+                   password_digest: hashed
+                 }
+
+      db.none('insert into users(username, password_digest) values(${username}, ${password_digest})', user)
+        .then(function () {
+          res.status(200)
+            .json({
+              status: 'success',
+              message: 'Inserted one user'
+            });
+        })
+        .catch(function (err) {
+          return next(err);
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
 }
 
 function login(req, res, next) {

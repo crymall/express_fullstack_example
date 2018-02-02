@@ -32,11 +32,9 @@ class LoginUser extends React.Component {
         password: this.state.passwordInput
       })
       .then(res => {
-        console.log(res.data);
-        this.setState({ usernameInput: "", passwordInput: "", message: "Inserted User" });
+        this.setState({ usernameInput: "", passwordInput: "", message: "Logged In" });
       })
       .catch(err => {
-        console.log("error: ", err);
         this.setState({ usernameInput: "", passwordInput: "", message: "Error inserting user" });
       });
   };

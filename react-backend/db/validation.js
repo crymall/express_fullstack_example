@@ -23,7 +23,17 @@ const authenticate = (username, password) => {
 }
 
 const createPassword = (password) => {
-  return bcrypt.hash(password, 10, (err, hash) => {
-    return hash;
+  return new Promise((resolve, reject) => {
+    let hashed = bcrypt.hashSync(password, 10);
+    if (hashed) {
+      resolve(hashed)
+    } else {
+      reject(new Error("Invalid password"))
+    }
   });
 };
+
+module.exports = {
+  authenticate: authenticate,
+  createPassword: createPassword
+}
